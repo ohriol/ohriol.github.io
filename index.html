@@ -65,8 +65,8 @@
   </head>
   
   <body> 
-  		<script type="text/javascript" src="../js/three.min.js"></script>
-		<script type="text/javascript" src="../js/OrbitControls.js"></script>
+  		<script type="text/javascript" src="../scripts/three.min.js"></script>
+		<script type="text/javascript" src="../scripts/OrbitControls.js"></script>
 
 		<script>
 			var scene, light, spotLight, camera, controls;
@@ -106,12 +106,12 @@
 				group = new THREE.Group();
 				scene.add( group );		
 
-				var mapHeight = new THREE.TextureLoader().load( 'img/earthbump1k.jpg' );
-				var mapSpecular = new THREE.TextureLoader().load( 'img/earthspec1k.jpg' );
+				var mapHeight = new THREE.TextureLoader().load( 'images/earthbump1k.jpg' );
+				var mapSpecular = new THREE.TextureLoader().load( 'images/earthspec1k.jpg' );
 				mapSpecular.specular  = new THREE.Color('grey');
 				
 				var loader = new THREE.TextureLoader();
-				loader.load( 'img/earthmap1k.jpg', function ( texture ) {
+				loader.load( 'images/earthmap1k.jpg', function ( texture ) {
 					geometry = new THREE.SphereGeometry( 20, 32, 32);
 					
 					material = new THREE.MeshPhongMaterial( { 
@@ -131,10 +131,10 @@
 				group2 = new THREE.Group();
 				scene.add( group2 );
 				
-				var mapAlpha = new THREE.TextureLoader().load( 'img/earthcloudmaptransB.jpg' );
+				var mapAlpha = new THREE.TextureLoader().load( 'images/earthcloudmaptransB.jpg' );
 				
 				var loader2 = new THREE.TextureLoader();
-				loader.load( 'img/earthcloudmap.jpg', function ( texture ) {
+				loader.load( 'images/earthcloudmap.jpg', function ( texture ) {
 					geometry2 = new THREE.SphereGeometry(20.5, 32, 32);
 					
 					material2 = new THREE.MeshPhongMaterial( { 
