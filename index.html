@@ -1,25 +1,200 @@
 ﻿<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <title>My test page</title>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link href="styles/style.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	
+    <title>o h r i o l</title>
+	<link rel="shortcut icon" href="favicon.ico">
+	
+	<style>
+		html {
+			height: 100%;
+		}
+		body {
+			background-color: #333333;
+			margin: 0px;
+			color: #666;
+			font-family: Monospace;
+			font-size: 13px;
+			overflow: auto;
+			text-align: center;
+		}
+		canvas {
+			display:block;
+		}
+		div {
+			width: 920px;
+			margin: auto;
+		}
+		span {
+			display: inline-block;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+		hr {
+			border: 0px;
+			height: 0px;
+			background-color: #222;
+		}
+		img {
+			border: 0;
+			width: 200px;
+			height: 200px;
+			background-color: #000;
+		}
+		a {
+			color: #aaaaaa;
+		}
+		#header {
+			margin-top:0px;
+			margin-bottom:30px;
+		}
+		@media all and ( max-width: 920px ) {
+			div{
+				width: 610px;
+			}
+		}
+		@media all and ( max-width: 610px ) {
+			div {
+				width: 300px;
+			}
+		}
+	</style>
   </head>
-  <body>
-    <h1>Mozilla is cool</h1>
-    <img src="images/firefox-icon.png" alt="The Firefox logo: a flaming fox surrounding the Earth.">
+  
+  <body> 
+  		<script type="text/javascript" src="../js/three.min.js"></script>
+		<script type="text/javascript" src="../js/OrbitControls.js"></script>
 
-    <p>At Mozilla, we’re a global community of</p>
-    
-    <ul> <!-- changed to list in the tutorial -->
-      <li>technologists</li>
-      <li>thinkers</li>
-      <li>builders</li>
-    </ul>
+		<script>
+			var scene, light, spotLight, camera, controls;
+			var geometry, material, mesh, group, texture;
+			var geometry2, material2, mesh2, group2;
+			var geometri, particles;
+			var clock, delta, now;
+			var renderer;
+			
+			function init() {
 
-    <p>working together to keep the Internet alive and accessible, so people worldwide can be informed contributors and creators of the Web. We believe this act of human collaboration across an open platform is essential to individual growth and our collective future.</p>
+			//SCENE
+				scene = new THREE.Scene();
 
-    <p>Read the <a href="https://www.mozilla.org/en-US/about/manifesto/">Mozilla Manifesto</a> to learn even more about the values and principles that guide the pursuit of our mission.</p>
-  <script src="scripts/main.js"></script></body>
+			//LIGHTS
+				light = new THREE.AmbientLight( 0x777777 )
+				scene.add( light );	
+				
+				spotLight = new THREE.DirectionalLight(0xcccccc, 1.0);
+				spotLight.position.set(-20, 0, 40);
+				scene.add( spotLight );
+				
+			//CAMERA
+				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 0.1, 1000 );
+				camera.position.z = 200;
+
+		
+			//MOUSE CAMERA CONTROLS
+				controls = new THREE.OrbitControls( camera );
+				controls.autoRotate = true;
+
+				clock = new THREE.Clock();
+				
+			//GEOMETRY, MATERIAL, MESH, TEXTURE
+				
+				//earth
+				group = new THREE.Group();
+				scene.add( group );		
+
+				var mapHeight = new THREE.TextureLoader().load( 'img/earthbump1k.jpg' );
+				var mapSpecular = new THREE.TextureLoader().load( 'img/earthspec1k.jpg' );
+				mapSpecular.specular  = new THREE.Color('grey');
+				
+				var loader = new THREE.TextureLoader();
+				loader.load( 'img/earthmap1k.jpg', function ( texture ) {
+					geometry = new THREE.SphereGeometry( 20, 32, 32);
+					
+					material = new THREE.MeshPhongMaterial( { 
+						color: 0xffffff,
+						map: texture, 
+						specular: mapSpecular,
+						bumpMap: mapHeight,
+						bumpScale: 1
+						} );
+					
+					mesh = new THREE.Mesh( geometry, material );
+					group.add( mesh );
+				} );
+				
+				//clouds	
+
+				group2 = new THREE.Group();
+				scene.add( group2 );
+				
+				var mapAlpha = new THREE.TextureLoader().load( 'img/earthcloudmaptransB.jpg' );
+				
+				var loader2 = new THREE.TextureLoader();
+				loader.load( 'img/earthcloudmap.jpg', function ( texture ) {
+					geometry2 = new THREE.SphereGeometry(20.5, 32, 32);
+					
+					material2 = new THREE.MeshPhongMaterial( { 
+						map: texture,
+						alphaMap: mapAlpha,
+						side: THREE.DoubleSide,
+						opacity: 0.8,
+						transparent: true,
+						depthWrite: false,
+						} );
+
+					mesh2 = new THREE.Mesh( geometry2, material2 );
+					group2.add( mesh2 );
+				} );
+				
+				
+				//text
+
+				
+				//univers
+				geometri = new THREE.Geometry();
+				for ( var i = 0; i < 10000; i ++ ) {
+					var vertex = new THREE.Vector3();
+					vertex.x = THREE.Math.randFloatSpread( 2000 );
+					vertex.y = THREE.Math.randFloatSpread( 2000 );
+					vertex.z = THREE.Math.randFloatSpread( 2000 );
+					geometri.vertices.push( vertex );
+				}
+				particles = new THREE.Points( geometri, new THREE.PointsMaterial( { color: 0x888888 } ) );
+				scene.add( particles );
+
+			//RENDERER
+				renderer = new THREE.WebGLRenderer( { antialias:true} );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+
+
+				document.body.appendChild( renderer.domElement );
+			}
+
+			//ANIMATE
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+
+				group.rotation.y  += 0.001;
+				
+				group2.rotation.y  += 0.01;
+				
+				delta = clock.getDelta();
+				controls.update(delta);
+				
+				
+				renderer.render( scene, camera );
+			}		
+			
+			init();
+			animate();
+		</script>
+  </body>
+  
 </html>
